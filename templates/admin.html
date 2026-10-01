@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARTCSSkins — Админка</title>
+<style>
+:root{
+  --bg:#0e1116;--bg2:#151a22;--bg3:#1c232e;--card:#171d26;--border:#242d3a;
+  --text:#e7ecf3;--muted:#8b96a5;--accent:#4f8cff;--accent2:#37c871;
+  --danger:#e5484d;--warn:#f5a524;--purple:#7a5cff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,Arial,sans-serif;min-height:100vh}
+a{color:var(--accent)}
+button{font-family:inherit;cursor:pointer;border:none;border-radius:8px;font-size:13px}
+input,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:8px 11px;font-size:13px;outline:none}
+input:focus,select:focus{border-color:var(--accent)}
+.header{display:flex;align-items:center;gap:14px;padding:12px 20px;background:var(--bg2);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.logo{font-size:20px;font-weight:800}
+.logo span{color:var(--accent)}
+.logo small{color:var(--purple);font-size:12px;margin-left:8px;border:1px solid var(--purple);padding:2px 8px;border-radius:10px}
+.header .spacer{flex:1}
+.main{max-width:1200px;margin:0 auto;padding:18px 16px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+.tabs button{background:var(--bg3);color:var(--muted);border:1px solid var(--border);padding:9px 18px;font-weight:600}
+.tabs button.on{color:#fff;background:var(--accent);border-color:var(--accent)}
+.tab{display:none}.tab.on{display:block}
+.subtabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.subtabs button{background:var(--bg3);color:var(--muted);border:1px solid var(--border);padding:7px 14px}
+.subtabs button.on{color:var(--text);border-color:var(--accent);background:rgba(79,140,255,.12)}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+.panel h3{font-size:15px;margin-bottom:12px}
+.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.btn{background:var(--accent);color:#fff;padding:8px 15px;font-weight:600}
+.btn:hover{filter:brightness(1.1)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.green{background:var(--accent2)}
+.btn.red{background:var(--danger)}
+.btn.warnb{background:var(--warn);color:#111}
+.btn.ghost{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.btn.sm{padding:5px 10px;font-size:12px}
+.empty{color:var(--muted);text-align:center;padding:40px 0}
+.req{border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px;background:var(--card)}
+.req .head{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.req .head b{font-size:15px}
+.req .head .sum{color:var(--accent2);font-weight:800;font-size:15px}
+.req .head time{color:var(--muted);font-size:12px}
+.req .head .spacer{flex:1}
+.tag{font-size:11px;padding:2px 9px;border-radius:10px;border:1px solid var(--border);color:var(--muted)}
+.tag.pending{color:var(--warn);border-color:var(--warn)}
+.tag.sending,.tag.sent{color:var(--accent);border-color:var(--accent)}
+.tag.closed,.tag.accepted,.tag.done{color:var(--accent2);border-color:var(--accent2)}
+.tag.cancelled,.tag.declined{color:var(--danger);border-color:var(--danger)}
+.items{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.item{border:1px solid var(--border);border-radius:10px;padding:8px;width:150px;background:var(--bg2)}
+.item img{width:100%;height:60px;object-fit:contain}
+.item .nm{font-size:11px;margin-top:5px;height:26px;overflow:hidden}
+.item .sub{font-size:11px;color:var(--muted)}
+.item .pr{font-size:12px;color:var(--accent2);font-weight:700}
+.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.trade-link{font-size:12px;word-break:break-all;background:var(--bg3);padding:6px 10px;border-radius:8px;border:1px solid var(--border)}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-weight:600;font-size:12px}
+tr.owner td{background:rgba(122,92,255,.08)}
+.badge{display:inline-block;background:linear-gradient(90deg,#7a5cff,#4f8cff);padding:2px 10px;border-radius:10px;font-size:10px;font-weight:700}
+.badge.mod{background:linear-gradient(90deg,#37c871,#4f8cff)}
+.toasts{position:fixed;top:70px;right:16px;z-index:200;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:11px 14px;font-size:13px;max-width:340px;animation:sl .25s}
+.toast.err{border-left-color:var(--danger)}
+.toast.ok{border-left-color:var(--accent2)}
+@keyframes sl{from{transform:translateX(30px);opacity:0}}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-bg.on{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;max-width:440px;width:100%;padding:20px}
+.modal h2{font-size:17px;margin-bottom:12px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+.field input,.field select{width:100%}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.checks label{display:flex;gap:7px;align-items:center;font-size:13px;background:var(--bg3);padding:7px 10px;border-radius:8px;border:1px solid var(--border)}
+.rules{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;font-size:12px;color:var(--muted);line-height:1.6;margin-top:12px}
+.rules b{color:var(--text)}
+.timer{font-size:20px;font-weight:800;color:var(--warn)}
+.timer.ok{color:var(--accent2)}
+.kv{font-size:13px;color:var(--muted);margin:3px 0}
+.kv b{color:var(--text)}
+select.reason{padding:6px 9px;font-size:12px}
+@media(max-width:700px){.item{width:120px}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">ARTCS<span>kins</span><small>ADMIN</small></div>
+  <div class="spacer"></div>
+  <a href="/" style="font-size:13px">← На сайт</a>
+</div>
+
+<div class="main">
+  <div class="tabs">
+    <button data-tab="requests" class="on" onclick="switchTab('requests')">Заявки</button>
+    <button data-tab="users" onclick="switchTab('users')">Пользователи</button>
+    <button data-tab="promos" onclick="switchTab('promos')">Промокоды</button>
+    <button data-tab="mods" onclick="switchTab('mods')">Модераторы</button>
+    <button data-tab="settings" onclick="switchTab('settings')">Настройки</button>
+  </div>
+
+  <!-- ЗАЯВКИ -->
+  <div class="tab on" id="tab-requests">
+    <div class="subtabs">
+      <button data-s="sales" class="on" onclick="switchReq('sales')">Продажа</button>
+      <button data-s="wds" onclick="switchReq('wds')">Покупка (вывод)</button>
+      <button data-s="pos" onclick="switchReq('pos')">Предзаказы</button>
+      <span style="flex:1"></span>
+      <button data-t="active" class="on" onclick="switchDone('active')">Активные</button>
+      <button data-t="done" onclick="switchDone('done')">Завершённые (24ч)</button>
+    </div>
+    <div id="reqList"></div>
+  </div>
+
+  <!-- ПОЛЬЗОВАТЕЛИ -->
+  <div class="tab" id="tab-users">
+    <div class="panel">
+      <div class="row">
+        <input id="userSearch" placeholder="Поиск по Site ID / Steam ID / нику" style="flex:1;min-width:220px">
+        <button class="btn" onclick="loadUsers()">Найти</button>
+      </div>
+    </div>
+    <div class="panel" style="overflow-x:auto">
+      <table id="usersTable"></table>
+    </div>
+  </div>
+
+  <!-- ПРОМОКОДЫ -->
+  <div class="tab" id="tab-promos">
+    <div class="panel">
+      <h3>Создать промокод</h3>
+      <div class="row">
+        <input id="pcCode" placeholder="Код" style="width:150px">
+        <select id="pcType">
+          <option value="percent">% к пополнению (при продаже)</option>
+          <option value="referral">Реферальный</option>
+        </select>
+        <input id="pcValue" type="number" placeholder="Значение (%)" style="width:110px" value="10">
+        <input id="pcMax" type="number" placeholder="Макс. использований (0 = ∞)" style="width:180px" value="0">
+        <button class="btn green" onclick="createPromo()">Создать</button>
+      </div>
+      <div class="kv" style="margin-top:8px">Реферальные коды пользователей генерируются автоматически и видны в их профиле.</div>
+    </div>
+    <div class="panel" style="overflow-x:auto">
+      <table id="promosTable"></table>
+    </div>
+  </div>
+
+  <!-- МОДЕРАТОРЫ -->
+  <div class="tab" id="tab-mods">
+    <div class="panel">
+      <h3>Назначить модератора</h3>
+      <div class="row">
+        <input id="modId" placeholder="Site ID или Steam ID" style="width:200px">
+        <button class="btn" onclick="findModUser()">Найти</button>
+      </div>
+      <div id="modConfirm" style="display:none;margin-top:14px">
+        <div class="kv" id="modUserInfo"></div>
+        <div class="field"><label>Права (минимум 1):</label>
+          <div class="checks" id="modPerms">
+            <label><input type="checkbox" value="sales"> Заявки на продажу</label>
+            <label><input type="checkbox" value="withdrawals"> Выводы (покупки)</label>
+            <label><input type="checkbox" value="preorders"> Предзаказы</label>
+            <label><input type="checkbox" value="users"> Пользователи / баланс</label>
+            <label><input type="checkbox" value="promocodes"> Промокоды</label>
+            <label><input type="checkbox" value="moderators"> Модераторы</label>
+            <label><input type="checkbox" value="bans"> Баны</label>
+            <label><input type="checkbox" value="settings"> Настройки</label>
+          </div>
+        </div>
+        <button class="btn green" onclick="createMod()">Подтвердить назначение</button>
+      </div>
+      <div class="rules">
+        <b>Инструкция для модератора:</b> обрабатывайте заявки в порядке очереди, проверяйте трейды перед подтверждением.<br>
+        <b>Правила:</b> не начисляйте баланс без заявки, не отклоняйте без причины, не разглашайте данные пользователей.<br>
+        <b>Наказания:</b> за нарушение — отзыв прав модератора; за злоупотребления — бан без права восстановления.
+      </div>
+    </div>
+    <div class="panel">
+      <h3>Список персонала</h3>
+      <div id="modsList"></div>
+    </div>
+  </div>
+
+  <!-- НАСТРОЙКИ -->
+  <div class="tab" id="tab-settings">
+    <div class="panel">
+      <h3>Настройки магазина</h3>
+      <div class="field"><label>Ссылка на поддержку (Telegram)</label>
+        <input id="setSupport" style="width:100%;max-width:420px">
+      </div>
+      <div class="field">
+        <label style="display:flex;gap:8px;align-items:center;color:var(--text)">
+          <input type="checkbox" id="setMaint"> Технические работы (сайт недоступен пользователям)
+        </label>
+      </div>
+      <button class="btn" onclick="saveSettings()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка вывода -->
+<div class="modal-bg" id="wdModalBg">
+  <div class="modal" id="wdModalBody"></div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+const PERM_LABELS = {sales:"Продажи",withdrawals:"Выводы",preorders:"Предзаказы",users:"Пользователи",promocodes:"Промокоды",moderators:"Модераторы",bans:"Баны",settings:"Настройки"};
+const DECLINE_REASONS = ["Неверный предмет в трейде","Скин не отправлен","Предмет не соответствует заявке","Просрочен трейд","Прочее"];
+let ME=null, reqKind="sales", reqTab="active", pollTimer=null, wdTimer=null, activeWd=null;
+
+const $ = id => document.getElementById(id);
+function fmt(c){ return "$"+(c/100).toFixed(2); }
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
+function toast(m,t=""){ const d=document.createElement("div"); d.className="toast "+t; d.textContent=m; $("toasts").appendChild(d); setTimeout(()=>d.remove(),6000); }
+
+async function api(path, opts={}){
+  const r = await fetch(path,{headers:{"Content-Type":"application/json"},...opts});
+  if(r.status===401){ location.href="/auth/login"; throw new Error("auth"); }
+  if(r.status===403 && !path.startsWith("/api/admin/settings")){ document.body.innerHTML='<div class="empty" style="padding:100px 20px"><h2>403 — Нет доступа</h2><p style="margin-top:10px"><a href="/">← На главную</a></p></div>'; throw new Error("403"); }
+  let data={}; try{ data=await r.json(); }catch(e){}
+  if(!r.ok) throw new Error(data.detail||("Ошибка "+r.status));
+  return data;
+}
+
+function switchTab(name){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("on"));
+  $("tab-"+name).classList.add("on");
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===name));
+  if(pollTimer){clearInterval(pollTimer);pollTimer=null;}
+  if(name==="requests") startRequests();
+  if(name==="users") loadUsers();
+  if(name==="promos") loadPromos();
+  if(name==="mods") loadMods();
+  if(name==="settings") loadSettings();
+}
+
+function switchReq(k){
+  reqKind=k;
+  document.querySelectorAll("#tab-requests .subtabs button[data-s]").forEach(b=>b.classList.toggle("on",b.dataset.s===k));
+  loadRequests();
+}
+function switchDone(t){
+  reqTab=t;
+  document.querySelectorAll("#tab-requests .subtabs button[data-t]").forEach(b=>b.classList.toggle("on",b.dataset.t===t));
+  loadRequests();
+}
+
+function startRequests(){
+  loadRequests();
+  if(pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(loadRequests, 10000);
+}
+
+async function loadRequests(){
+  let html = "";
+  try{
+    if(reqKind==="sales"){
+      const rows = await api("/api/admin/sales?tab="+reqTab);
+      html = rows.map(saleCard).join("") || '<div class="empty">Заявок нет</div>';
+    } else if(reqKind==="wds"){
+      const rows = await api("/api/admin/withdrawals?tab="+reqTab);
+      html = rows.map(wdCard).join("") || '<div class="empty">Заявок нет</div>';
+    } else {
+      const rows = await api("/api/admin/preorders?tab="+reqTab);
+      html = rows.map(poCard).join("") || '<div class="empty">Заявок нет</div>';
+    }
+  }catch(e){ html = '<div class="empty">'+esc(e.message)+'</div>'; }
+  $("reqList").innerHTML = html;
+}
+
+function itemHtml(it){
+  return `<div class="item"><img src="${esc(it.icon_url||"")}" onerror="this.style.opacity=.15">
+    <div class="nm">${esc(it.name||it.market_hash_name||"")}</div>
+    <div class="sub">${it.stattrak?"StatTrak · ":""}${it.wear||""}${it.float_value!==undefined?" · float "+Number(it.float_value).toFixed(4):""}</div>
+    <div class="pr">${fmt(it.sell_price||it.site_price||0)}</div></div>`;
+}
+
+function declineCtl(kind, id){
+  return `<select class="reason" id="rs${kind}${id}">${DECLINE_REASONS.map(r=>`<option>${r}</option>`).join("")}</select>`;
+}
+
+function saleCard(s){
+  return `<div class="req">
+    <div class="head"><b>${esc(s.nickname)}</b>
+      <a class="tag" href="https://steamcommunity.com/profiles/${s.steam_id}" target="_blank">Steam</a>
+      <span class="tag">Site ID: ${s.user_id}</span>
+      ${s.promo_code?`<span class="tag" style="color:var(--purple);border-color:var(--purple)">Промо: ${esc(s.promo_code)}</span>`:""}
+      <span class="sum">${fmt(s.total)}</span><span class="spacer"></span>
+      <span class="tag ${s.status}">${s.status}</span>
+      <time>${(s.created_at||"").slice(0,16).replace("T"," ")}</time></div>
+    <div class="items">${s.items.map(itemHtml).join("")}</div>
+    ${s.status==="pending"?`<div class="actions">
+      <button class="btn green sm" onclick="saleAccept(${s.id})">Принять</button>
+      ${declineCtl("s",s.id)}
+      <button class="btn red sm" onclick="saleDecline(${s.id},true)">Отказать (штраф $1)</button>
+      <button class="btn warnb sm" onclick="saleDeclineNoPenalty(${s.id})">Отказать без штрафа</button>
+    </div>`:`<div class="kv">Причина/итог: <b>${esc(s.reason||"—")}</b></div>`}
+  </div>`;
+}
+
+function wdCard(w){
+  const left = w.expires_at ? Math.max(0, new Date(w.expires_at) - Date.now()) : 0;
+  return `<div class="req">
+    <div class="head"><b>${esc(w.nickname)}</b>
+      <a class="tag" href="https://steamcommunity.com/profiles/${w.steam_id}" target="_blank">Steam</a>
+      <span class="tag">Site ID: ${w.user_id}</span>
+      <span class="sum">${fmt(w.total)}</span><span class="spacer"></span>
+      <span class="tag ${w.status}">${w.status}</span>
+      <time>${(w.created_at||"").slice(0,16).replace("T"," ")}</time></div>
+    <div class="items">${w.items.map(itemHtml).join("")}</div>
+    ${w.trade_link?`<div class="trade-link">Трейд-ссылка: <a href="${esc(w.trade_link)}" target="_blank">${esc(w.trade_link)}</a></div>`:'<div class="trade-link" style="color:var(--danger)">Трейд-ссылка не привязана!</div>'}
+    ${["pending","sending","sent"].includes(w.status)?`<div class="actions" style="margin-top:10px">
+      <button class="btn green sm" onclick="wdStart(${w.id})">Перейти к выводу</button>
+      ${w.status!=="pending"?`<button class="btn sm" onclick="wdSent(${w.id})">Трейд отправлен</button>`:""}
+      ${w.status==="sent"?`<button class="btn green sm" onclick="wdClose(${w.id})">Вывод закрыт</button>`:""}
+      ${declineCtl("w",w.id)}
+      <button class="btn red sm" onclick="wdDecline(${w.id},true)">Отказать (штраф $1)</button>
+      <button class="btn warnb sm" onclick="wdDeclineNoPenalty(${w.id})">Отказать без штрафа</button>
+      ${left>0?`<span class="timer" id="timer${w.id}"></span>`:""}
+    </div>`:`<div class="kv">Итог: <b>${esc(w.note||w.status)}</b></div>`}
+  </div>`;
+}
+
+function poCard(p){
+  return `<div class="req">
+    <div class="head"><b>${esc(p.nickname)}</b>
+      <a class="tag" href="https://steamcommunity.com/profiles/${p.steam_id}" target="_blank">Steam</a>
+      <span class="tag">Site ID: ${p.user_id}</span>
+      <span class="sum">${fmt(p.price)}</span><span class="spacer"></span>
+      <span class="tag ${p.status}">${p.status}</span></div>
+    <div class="items">${itemHtml({name:p.skin_name,icon_url:p.icon_url,stattrak:p.stattrak,wear:p.wear,sell_price:p.price})}</div>
+    <div class="kv">Создан: <b>${(p.created_at||"").slice(0,16).replace("T"," ")}</b> · Дедлайн: <b style="color:var(--warn)">${(p.expires_at||"").slice(0,16).replace("T"," ")}</b></div>
+    ${p.trade_link?`<div class="trade-link"><a href="${esc(p.trade_link)}" target="_blank">${esc(p.trade_link)}</a></div>`:""}
+    ${p.status==="active"?`<div class="actions" style="margin-top:10px">
+      <button class="btn green sm" onclick="poFulfill(${p.id})">Я готов выполнить предзаказ</button>
+      <button class="btn red sm" onclick="poCancel(${p.id})">Отказ от предзаказа (возврат денег)</button>
+    </div>`:""}
+  </div>`;
+}
+
+/* --- API actions --- */
+async function act(path, body, okMsg){
+  try{
+    await api(path,{method:"POST",body:JSON.stringify(body||{})});
+    if(okMsg) toast(okMsg,"ok");
+    loadRequests();
+  }catch(e){ toast(e.message,"err"); }
+}
+function saleAccept(id){ act("/api/admin/sales/"+id+"/accept",{},"Заявка принята, баланс начислен"); }
+function saleDecline(id,pen){ act("/api/admin/sales/"+id+"/decline",{reason:$("rss"+id).value,penalty:pen}); }
+function saleDeclineNoPenalty(id){
+  const c = prompt("Комментарий (обязательно):");
+  if(!c){ toast("Комментарий обязателен","err"); return; }
+  act("/api/admin/sales/"+id+"/decline",{reason:c,penalty:false});
+}
+function wdStart(id){ openWdModal(id); }
+function wdSent(id){ act("/api/admin/withdrawals/"+id+"/sent",{},"Пользователь уведомлён"); }
+function wdClose(id){ act("/api/admin/withdrawals/"+id+"/close",{},"Вывод закрыт"); }
+function wdDecline(id,pen){ act("/api/admin/withdrawals/"+id+"/decline",{reason:$("rsw"+id).value,penalty:pen}); }
+function wdDeclineNoPenalty(id){
+  const c = prompt("Комментарий (обязательно):");
+  if(!c){ toast("Комментарий обязателен","err"); return; }
+  act("/api/admin/withdrawals/"+id+"/decline",{reason:c,penalty:false});
+}
+function poFulfill(id){ act("/api/admin/preorders/"+id+"/fulfill",{},"Предзаказ выполнен, скин выдан"); }
+function poCancel(id){
+  if(!confirm("Вернуть деньги пользователю?")) return;
+  act("/api/admin/preorders/"+id+"/cancel",{},"Предзаказ отменён, деньги возвращены");
+}
+
+/* --- Окно вывода --- */
+async function openWdModal(id){
+  try{
+    const rows = await api("/api/admin/withdrawals?tab=active");
+    const w = rows.find(x=>x.id===id);
+    if(!w) return;
+    activeWd = w;
+    $("wdModalBody").innerHTML = `
+      <h2>Вывод #${w.id} — ${esc(w.nickname)}</h2>
+      <div class="kv">Скины: <b>${w.items.map(i=>esc(i.name)).join(", ")}</b></div>
+      <div class="kv">Сумма: <b style="color:var(--accent2)">${fmt(w.total)}</b></div>
+      <div class="kv">Трейд-ссылка: <a href="${esc(w.trade_link||"#")}" target="_blank">${esc(w.trade_link||"не привязана")}</a></div>
+      <div style="margin:14px 0;text-align:center">
+        <div class="timer" id="wdTimer">5:00</div>
+        <div class="kv">Отправьте трейд и подтвердите</div>
+      </div>
+      <div class="actions" style="justify-content:center">
+        <button class="btn ghost sm" onclick="navigator.clipboard.writeText('${esc(w.trade_link||"")}');toast('Ссылка скопирована','ok')">Скопировать ссылку</button>
+        <button class="btn sm" onclick="wdSentFromModal(${w.id})">Трейд отправлен</button>
+        <button class="btn green sm" onclick="wdCloseFromModal(${w.id})">Вывод закрыт</button>
+        <button class="btn red sm" onclick="wdCancelModal(${w.id})">Отмена</button>
+      </div>`;
+    $("wdModalBg").classList.add("on");
+    if(wdTimer) clearInterval(wdTimer);
+    const deadline = w.expires_at ? new Date(w.expires_at) : new Date(Date.now()+5*60000);
+    wdTimer = setInterval(()=>{
+      const left = Math.max(0, deadline - Date.now());
+      const m = Math.floor(left/60000), s = Math.floor(left%60000/1000);
+      const el = $("wdTimer");
+      if(el){ el.textContent = m+":"+String(s).padStart(2,"0"); el.className = "timer"+(left===0?" ok":""); }
+      if(left===0){ clearInterval(wdTimer); $("wdModalBg").classList.remove("on"); toast("Таймаут 5 минут истёк — заявка отменена со штрафом","err"); loadRequests(); }
+    }, 500);
+  }catch(e){ toast(e.message,"err"); }
+}
+function wdSentFromModal(id){ $("wdModalBg").classList.remove("on"); if(wdTimer)clearInterval(wdTimer); wdSent(id); }
+function wdCloseFromModal(id){ $("wdModalBg").classList.remove("on"); if(wdTimer)clearInterval(wdTimer); wdClose(id); }
+function wdCancelModal(id){ $("wdModalBg").classList.remove("on"); if(wdTimer)clearInterval(wdTimer); }
+
+/* --- Пользователи --- */
+async function loadUsers(){
+  let rows=[];
+  try{ rows = await api("/api/admin/users?q="+encodeURIComponent($("userSearch").value||"")); }catch(e){ toast(e.message,"err"); }
+  $("usersTable").innerHTML = `<tr><th>Ник</th><th>Site ID</th><th>Steam ID</th><th>Баланс</th><th>Рефералов</th><th>Статус</th><th>Действия</th></tr>` +
+    rows.map(u=>`<tr class="${u.is_admin?"owner":""}">
+      <td><a href="https://steamcommunity.com/profiles/${u.steam_id}" target="_blank">${esc(u.nickname)}</a>
+        ${u.is_admin?'<span class="badge">ВЛАДЕЛЕЦ</span>':u.is_moderator?'<span class="badge mod">МОДЕР</span>':""}</td>
+      <td>${u.id}</td><td>${u.steam_id}</td>
+      <td style="color:var(--accent2);font-weight:700">${fmt(u.balance)}</td><td>${u.referrals}</td>
+      <td>${u.is_banned?'<span style="color:var(--danger)">Бан'+(u.ban_until?" до "+u.ban_until.slice(0,16).replace("T"," "):" навсегда")+"</span>":"—"}</td>
+      <td class="actions">
+        <button class="btn sm" onclick="uBalance(${u.id})">± Баланс</button>
+        ${u.is_banned
+          ? `<button class="btn green sm" onclick="uUnban(${u.id})">Разбанить</button>`
+          : `<button class="btn red sm" onclick="uBan(${u.id},'${u.steam_id}')">Бан</button>`}
+      </td></tr>`).join("");
+}
+async function uBalance(id){
+  const v = prompt("Сумма в центах (например 500 = $5.00, -500 = списание):");
+  if(v===null) return;
+  const d = prompt("Комментарий:")||"";
+  try{ await api("/api/admin/users/"+id+"/balance",{method:"POST",body:JSON.stringify({delta:parseInt(v)||0,description:d})}); toast("Баланс изменён","ok"); loadUsers(); }
+  catch(e){ toast(e.message,"err"); }
+}
+async function uBan(id, sid){
+  const m = prompt("Срок бана в минутах (пусто = навсегда):");
+  if(m===null) return;
+  const r = prompt("Причина (можно без):")||"";
+  try{ await api("/api/admin/users/"+id+"/ban",{method:"POST",body:JSON.stringify({minutes:m?parseInt(m):null,reason:r})}); toast("Пользователь забанен","ok"); loadUsers(); }
+  catch(e){ toast(e.message,"err"); }
+}
+async function uUnban(id){
+  const c = prompt("Комментарий (можно без):")||"";
+  try{ await api("/api/admin/users/"+id+"/unban",{method:"POST",body:JSON.stringify({comment:c})}); toast("Пользователь разбанен","ok"); loadUsers(); }
+  catch(e){ toast(e.message,"err"); }
+}
+
+/* --- Промокоды --- */
+async function loadPromos(){
+  let rows=[];
+  try{ rows = await api("/api/admin/promocodes"); }catch(e){ toast(e.message,"err"); }
+  $("promosTable").innerHTML = `<tr><th>Код</th><th>Тип</th><th>Значение</th><th>Использовано</th><th>Создан</th></tr>` +
+    rows.map(p=>`<tr><td><b>${esc(p.code)}</b></td><td>${p.type==="percent"?"% к пополнению":"Реферальный"}</td>
+    <td>${p.type==="percent"?p.value+"%":"—"}</td><td>${p.used_count}${p.max_uses>0?" / "+p.max_uses:" / ∞"}</td>
+    <td>${(p.created_at||"").slice(0,10)}</td></tr>`).join("");
+}
+async function createPromo(){
+  try{
+    await api("/api/admin/promocodes",{method:"POST",body:JSON.stringify({
+      code:$("pcCode").value, type:$("pcType").value,
+      value:parseInt($("pcValue").value)||0, max_uses:parseInt($("pcMax").value)||0})});
+    toast("Промокод создан","ok"); $("pcCode").value=""; loadPromos();
+  }catch(e){ toast(e.message,"err"); }
+}
+
+/* --- Модераторы --- */
+let modCandidate = null;
+async function findModUser(){
+  const ident = $("modId").value.trim();
+  if(!ident) return;
+  try{
+    const rows = await api("/api/admin/users?q="+encodeURIComponent(ident));
+    const u = rows.find(x=>String(x.id)===ident || x.steam_id===ident);
+    if(!u){ toast("Пользователь не найден","err"); return; }
+    modCandidate = u;
+    $("modConfirm").style.display="block";
+    $("modUserInfo").innerHTML = `Пользователь: <b>${esc(u.nickname)}</b> · Site ID: <b>${u.id}</b> · Steam ID: <b>${u.steam_id}</b>`;
+  }catch(e){ toast(e.message,"err"); }
+}
+async function createMod(){
+  const perms = [...document.querySelectorAll("#modPerms input:checked")].map(i=>i.value);
+  if(!perms.length){ toast("Выберите минимум одно право","err"); return; }
+  try{
+    await api("/api/admin/moderators",{method:"POST",body:JSON.stringify({identifier:$("modId").value.trim(),permissions:perms})});
+    toast("Модератор назначен","ok"); $("modConfirm").style.display="none"; $("modId").value=""; loadMods();
+  }catch(e){ toast(e.message,"err"); }
+}
+async function loadMods(){
+  let rows=[];
+  try{ rows = await api("/api/admin/moderators"); }catch(e){ toast(e.message,"err"); return; }
+  $("modsList").innerHTML = rows.map(u=>`
+    <div class="item" style="width:100%;display:flex;align-items:center;gap:12px;border:1px solid var(--border);border-radius:10px;padding:10px;margin-bottom:8px;background:var(--bg2)">
+      <img src="${esc(u.avatar||"")}" style="width:44px;height:44px;border-radius:50%" onerror="this.style.opacity=.2">
+      <div style="flex:1">
+        <b>${esc(u.nickname)}</b> ${u.is_admin?'<span class="badge">ВЛАДЕЛЕЦ</span>':'<span class="badge mod">МОДЕР</span>'}<br>
+        <span style="font-size:12px;color:var(--muted)">Site ID: ${u.id} · Steam ID: ${u.steam_id}</span><br>
+        ${u.is_admin?"Все права":(u.permissions||[]).map(p=>`<span class="tag">${PERM_LABELS[p]||p}</span>`).join(" ")}
+      </div>
+      ${u.is_admin?"":`<button class="btn red sm" onclick="delMod(${u.id})">Отозвать</button>`}
+    </div>`).join("") || '<div class="empty">Персонала нет</div>';
+}
+async function delMod(id){
+  if(!confirm("Отозвать права модератора?")) return;
+  try{ await api("/api/admin/moderators/"+id,{method:"DELETE"}); toast("Права отозваны","ok"); loadMods(); }
+  catch(e){ toast(e.message,"err"); }
+}
+
+/* --- Настройки --- */
+async function loadSettings(){
+  try{
+    const s = await api("/api/admin/settings");
+    $("setSupport").value = s.support_link;
+    $("setMaint").checked = s.maintenance==="1";
+  }catch(e){ toast(e.message,"err"); }
+}
+async function saveSettings(){
+  try{
+    await api("/api/admin/settings",{method:"PUT",body:JSON.stringify({
+      support_link:$("setSupport").value.trim(),
+      maintenance:$("setMaint").checked?"1":"0"})});
+    toast("Настройки сохранены","ok");
+  }catch(e){ toast(e.message,"err"); }
+}
+
+(async function init(){
+  try{ ME = await api("/api/me"); }catch(e){ return; }
+  if(!ME.is_staff){ document.body.innerHTML='<div class="empty" style="padding:100px 20px"><h2>403 — Нет доступа</h2><p style="margin-top:10px"><a href="/">← На главную</a></p></div>'; return; }
+  startRequests();
+})();
+</script>
+</body>
+</html>
