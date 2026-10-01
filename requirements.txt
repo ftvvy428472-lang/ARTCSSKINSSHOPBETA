@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+httpx
+fastapi-steam
+apscheduler
+jinja2
+python-dotenv
+itsdangerous
