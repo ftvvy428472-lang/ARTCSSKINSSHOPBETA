@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARTCSSkins</title>
+<style>
+:root{
+  --bg:#0e1116;--bg2:#151a22;--bg3:#1c232e;--card:#171d26;--border:#242d3a;
+  --text:#e7ecf3;--muted:#8b96a5;--accent:#4f8cff;--accent2:#37c871;
+  --danger:#e5484d;--warn:#f5a524;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,Arial,sans-serif;min-height:100vh;padding-bottom:76px}
+a{color:var(--accent);text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;border-radius:8px;font-size:14px}
+input,select{background:var(--bg3);border:1px solid var(--border);color:var(--text);border-radius:8px;padding:9px 12px;font-size:14px;outline:none}
+input:focus,select:focus{border-color:var(--accent)}
+.header{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:14px;padding:12px 20px;background:rgba(14,17,22,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border)}
+.logo{font-size:22px;font-weight:800;letter-spacing:.5px}
+.logo span{color:var(--accent)}
+.header .spacer{flex:1}
+.balance-chip{background:var(--bg3);border:1px solid var(--border);border-radius:20px;padding:7px 16px;font-weight:700}
+.icon-btn{position:relative;background:var(--bg3);border:1px solid var(--border);color:var(--text);width:40px;height:40px;border-radius:10px;font-size:17px}
+.dot{position:absolute;top:6px;right:7px;width:9px;height:9px;background:var(--danger);border-radius:50%;display:none}
+.dot.on{display:block}
+.main{max-width:1100px;margin:0 auto;padding:20px 16px}
+.tab{display:none}
+.tab.on{display:block}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px;align-items:center}
+.filters select,.filters input{padding:8px 10px;font-size:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:14px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:.15s;cursor:pointer}
+.card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.card img{width:100%;height:130px;object-fit:contain;background:radial-gradient(circle at 50% 40%,#232c3a,#141a23)}
+.card .body{padding:12px}
+.card .name{font-size:13px;font-weight:600;height:34px;overflow:hidden}
+.card .price{color:var(--accent2);font-weight:800;margin-top:6px}
+.card .stock{font-size:12px;color:var(--muted);margin-top:3px}
+.card .stock.out{color:var(--warn)}
+.empty{color:var(--muted);text-align:center;padding:60px 0}
+.btn{background:var(--accent);color:#fff;padding:10px 18px;font-weight:600}
+.btn:hover{filter:brightness(1.1)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.green{background:var(--accent2)}
+.btn.red{background:var(--danger)}
+.btn.ghost{background:var(--bg3);color:var(--text);border:1px solid var(--border)}
+.btn.sm{padding:6px 12px;font-size:12px}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px}
+.panel h3{font-size:15px;margin-bottom:12px}
+.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.item{display:flex;align-items:center;gap:12px;padding:10px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;background:var(--bg2)}
+.item img{width:72px;height:52px;object-fit:contain}
+.item .info{flex:1;min-width:0}
+.item .nm{font-size:13px;font-weight:600;word-break:break-word}
+.item .sub{font-size:12px;color:var(--muted)}
+.item .pr{text-align:right;white-space:nowrap}
+.item .pr .s{color:var(--muted);font-size:12px}
+.item .pr .b{color:var(--accent2);font-weight:700}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:60;display:flex;background:rgba(17,21,27,.97);border-top:1px solid var(--border);backdrop-filter:blur(10px)}
+.bottom-nav button{flex:1;background:none;color:var(--muted);padding:11px 4px 13px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:3px}
+.bottom-nav button .ic{font-size:19px}
+.bottom-nav button.on{color:var(--accent)}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:100;display:none;align-items:center;justify-content:center;padding:16px}
+.modal-bg.on{display:flex}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:14px;max-width:460px;width:100%;max-height:88vh;overflow-y:auto;padding:20px}
+.modal h2{font-size:18px;margin-bottom:14px}
+.modal .close-x{float:right;background:none;color:var(--muted);font-size:20px}
+.modal img.big{width:100%;height:170px;object-fit:contain;background:radial-gradient(circle at 50% 40%,#232c3a,#141a23);border-radius:10px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:var(--muted);margin-bottom:5px}
+.field select,.field input{width:100%}
+.price-line{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin:4px 0}
+.price-line .v{color:var(--text)}
+.price-line.total{font-size:16px;font-weight:800;color:var(--accent2);border-top:1px solid var(--border);padding-top:8px;margin-top:8px}
+.toasts{position:fixed;top:70px;right:16px;z-index:200;display:flex;flex-direction:column;gap:8px}
+.toast{background:var(--bg3);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:11px 14px;font-size:13px;max-width:320px;animation:slidein .25s}
+.toast.err{border-left-color:var(--danger)}
+.toast.ok{border-left-color:var(--accent2)}
+@keyframes slidein{from{transform:translateX(30px);opacity:0}}
+.notif-panel{position:fixed;top:64px;right:16px;z-index:150;width:340px;max-height:70vh;overflow-y:auto;background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px;display:none}
+.notif-panel.on{display:block}
+.notif-panel .np-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.notif{padding:9px;border-bottom:1px solid var(--border);font-size:13px;display:flex;gap:8px;align-items:flex-start}
+.notif .txt{flex:1}
+.notif.unread .txt{font-weight:600}
+.notif time{font-size:11px;color:var(--muted)}
+.trade-window{background:var(--bg2);border:1px solid var(--warn);border-radius:14px;padding:22px;text-align:center}
+.trade-window a.trade{display:block;background:var(--accent);color:#fff;padding:12px;border-radius:10px;font-weight:700;margin:14px 0;word-break:break-all}
+.profile-top{display:flex;gap:16px;align-items:center;margin-bottom:16px}
+.profile-top img{width:72px;height:72px;border-radius:50%;border:2px solid var(--accent)}
+.kv{font-size:13px;color:var(--muted);margin:3px 0}
+.kv b{color:var(--text)}
+.staff-badge{display:inline-block;background:linear-gradient(90deg,#7a5cff,#4f8cff);padding:3px 12px;border-radius:12px;font-size:11px;font-weight:700;margin-left:8px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-weight:600;font-size:12px}
+td.plus{color:var(--accent2)}
+td.minus{color:var(--danger)}
+.subtabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.subtabs button{background:var(--bg3);color:var(--muted);border:1px solid var(--border);padding:7px 14px;border-radius:8px;font-size:13px}
+.subtabs button.on{color:var(--text);border-color:var(--accent);background:rgba(79,140,255,.12)}
+.footer{padding:26px 16px 90px;text-align:center;color:var(--muted);font-size:13px}
+.sell-note{font-size:12px;color:var(--muted);margin-top:8px}
+.checkbox{width:18px;height:18px;accent-color:var(--accent)}
+@media(max-width:640px){.grid{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}.card img{height:100px}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="logo">ARTCS<span>kins</span></div>
+  <div class="spacer"></div>
+  <div class="balance-chip" id="balanceChip">$0.00</div>
+  <button class="icon-btn" id="bellBtn" title="Уведомления">&#128276;<span class="dot" id="bellDot"></span></button>
+  <button class="icon-btn" id="logoutBtn" title="Выйти">&#10148;</button>
+</div>
+
+<div class="notif-panel" id="notifPanel">
+  <div class="np-head">
+    <b>Уведомления</b>
+    <span>
+      <button class="btn ghost sm" onclick="readAllNotifs()">Прочитать все</button>
+      <button class="btn ghost sm" onclick="deleteAllNotifs()">Очистить</button>
+    </span>
+  </div>
+  <div id="notifList"></div>
+</div>
+
+<div class="main">
+  <!-- КУПИТЬ -->
+  <div class="tab on" id="tab-shop">
+    <div class="filters">
+      <select id="fSt">
+        <option value="all">StatTrak: все</option>
+        <option value="1">Только StatTrak</option>
+        <option value="0">Без StatTrak</option>
+      </select>
+      <select id="fWear">
+        <option value="all">Состояние: любое</option>
+        <option value="FN">FN — Factory New</option>
+        <option value="MW">MW — Minimal Wear</option>
+        <option value="FT">FT — Field-Tested</option>
+        <option value="WW">WW — Well-Worn</option>
+        <option value="BS">BS — Battle-Scarred</option>
+      </select>
+      <select id="fType">
+        <option value="all">Тип: все</option>
+        <option value="pistol">Пистолет</option>
+        <option value="smg">SMG</option>
+        <option value="heavy">Тяжёлое</option>
+        <option value="rifle">Винтовка</option>
+        <option value="knife">Нож</option>
+        <option value="other">Прочее</option>
+      </select>
+      <input type="number" id="fMin" placeholder="Цена от $" style="width:90px">
+      <input type="number" id="fMax" placeholder="Цена до $" style="width:90px">
+      <select id="fSort">
+        <option value="price_asc">Цена: по возрастанию</option>
+        <option value="price_desc">Цена: по убыванию</option>
+        <option value="wear_asc">Состояние: FN → BS</option>
+        <option value="wear_desc">Состояние: BS → FN</option>
+      </select>
+      <button class="btn sm" onclick="loadCatalog()">Применить</button>
+    </div>
+    <div class="grid" id="catalog"></div>
+    <div class="empty" id="catalogEmpty" style="display:none">Каталог пуст. Скины появятся, когда пользователи начнут продавать.</div>
+  </div>
+
+  <!-- ПРОДАТЬ -->
+  <div class="tab" id="tab-sell">
+    <div class="panel">
+      <div class="row" style="justify-content:space-between">
+        <h3 style="margin:0">Ваш Steam-инвентарь</h3>
+        <button class="btn" id="loadInvBtn" onclick="loadSteamInventory()">Загрузить инвентарь</button>
+      </div>
+      <div class="sell-note">Выкуп по цене Steam × 0.85. Минимальная цена скина — $0.20. Можно выбрать до 5 скинов.</div>
+      <div id="sellStatus" style="display:none;margin-top:10px"></div>
+    </div>
+    <div id="sellList"></div>
+    <div class="panel" id="sellFooter" style="display:none">
+      <div class="row" style="justify-content:space-between">
+        <div>Итого: <b id="sellTotal" style="color:var(--accent2)">$0.00</b> <span style="color:var(--muted);font-size:12px" id="sellCount"></span></div>
+        <button class="btn green" id="sellSubmitBtn" onclick="submitSale()">Продать</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ИНВЕНТАРЬ -->
+  <div class="tab" id="tab-inv">
+    <div class="panel" id="wdStatusPanel" style="display:none"></div>
+    <div class="panel">
+      <h3>Инвентарь сайта</h3>
+      <div class="sell-note">Выберите до 5 скинов и нажмите «Получить». Админ отправит трейд по вашей трейд-ссылке.</div>
+    </div>
+    <div id="invList"></div>
+    <div class="panel" id="invFooter" style="display:none">
+      <div class="row" style="justify-content:space-between">
+        <div>Сумма вывода: <b id="invTotal" style="color:var(--accent2)">$0.00</b></div>
+        <button class="btn green" id="getBtn" onclick="submitWithdraw()">Получить</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ПРОФИЛЬ -->
+  <div class="tab" id="tab-profile">
+    <div class="panel">
+      <div class="profile-top">
+        <img id="pAvatar" src="">
+        <div>
+          <div style="font-size:19px;font-weight:800" id="pNick"></div>
+          <div class="kv">Site ID: <b id="pSiteId"></b></div>
+          <div class="kv">Steam ID: <b id="pSteamId"></b></div>
+          <div class="kv" id="pStaffBadge" style="display:none"><span class="staff-badge">Персонал</span></div>
+        </div>
+      </div>
+      <div class="kv">Баланс: <b id="pBalance" style="color:var(--accent2);font-size:17px"></b></div>
+      <div class="kv">Ваш реферальный код: <b id="pRefCode"></b></div>
+    </div>
+
+    <div class="panel">
+      <h3>Трейд-ссылка</h3>
+      <div class="kv" id="tlCurrent"></div>
+      <div class="row">
+        <input id="tlInput" placeholder="https://steamcommunity.com/tradeoffer/new/?partner=..." style="flex:1;min-width:220px">
+        <button class="btn sm" onclick="saveTradeLink()">Сохранить</button>
+      </div>
+      <div class="sell-note">Смена трейд-ссылки — раз в 30 минут.</div>
+    </div>
+
+    <div class="panel">
+      <h3>Промокод</h3>
+      <div class="row">
+        <input id="promoInput" placeholder="Введите промокод" style="flex:1;min-width:180px">
+        <button class="btn sm" onclick="applyPromo()">Применить</button>
+      </div>
+      <div class="sell-note">Промокод на % действует при продаже скинов. Реферальный код можно привязать один раз.</div>
+    </div>
+
+    <div class="panel">
+      <h3>История транзакций</h3>
+      <div id="txList"></div>
+    </div>
+
+    <div class="panel">
+      <h3>Настройки</h3>
+      <div class="kv">Поддержка: <a id="supportLink" href="#" target="_blank"></a></div>
+      <div class="kv" id="adminLinkRow" style="display:none"><a href="/admin">Панель администратора →</a></div>
+      <div class="kv"><a href="#" onclick="logout();return false" style="color:var(--danger)">Выйти из аккаунта</a></div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  ARTCSSkins © 2026 · Поддержка: <a id="footSupport" href="#" target="_blank">Telegram @ARTCSSKINSSHOP</a>
+</div>
+
+<nav class="bottom-nav">
+  <button data-tab="inv" onclick="switchTab('inv')"><span class="ic">&#128188;</span>Инвентарь</button>
+  <button data-tab="sell" onclick="switchTab('sell')"><span class="ic">&#128184;</span>Продать</button>
+  <button data-tab="shop" class="on" onclick="switchTab('shop')"><span class="ic">&#128722;</span>Купить</button>
+  <button data-tab="profile" onclick="switchTab('profile')"><span class="ic">&#128100;</span>Профиль</button>
+</nav>
+
+<!-- Модалка покупки -->
+<div class="modal-bg" id="buyModalBg">
+  <div class="modal">
+    <button class="close-x" onclick="closeModal('buyModalBg')">&times;</button>
+    <div id="buyModalBody"></div>
+  </div>
+</div>
+
+<!-- Окно продажи (нельзя закрыть) -->
+<div class="modal-bg" id="sellModalBg">
+  <div class="modal">
+    <div class="trade-window">
+      <h2 style="margin-bottom:10px">Отправьте трейд админу</h2>
+      <div style="font-size:13px;color:var(--muted)">Перейдите по ссылке и отправьте обмен со следующими скинами:</div>
+      <a class="trade" id="sellTradeLink" href="#" target="_blank"></a>
+      <div id="sellModalItems" style="text-align:left;font-size:13px;max-height:180px;overflow-y:auto"></div>
+      <div style="margin-top:14px;font-size:13px;color:var(--muted)">Сумма выкупа: <b id="sellModalTotal" style="color:var(--accent2)"></b></div>
+      <div style="margin-top:14px;font-size:13px" id="sellModalStatus">Ожидаем подтверждения администратора…</div>
+    </div>
+  </div>
+</div>
+
+<div class="toasts" id="toasts"></div>
+
+<script>
+const WEARS = ["FN","MW","FT","WW","BS"];
+const WEAR_FULL = {FN:"Factory New",MW:"Minimal Wear",FT:"Field-Tested",WW:"Well-Worn",BS:"Battle-Scarred"};
+let ME = null, SUPPORT = "https://t.me/ARTCSSKINSSHOP";
+let lastNotifId = 0, sellSelected = new Set(), invSelected = new Set();
+let sellTimer = null, currentSkin = null, currentPrices = [];
+
+const $ = id => document.getElementById(id);
+function fmt(c){ return "$"+(c/100).toFixed(2); }
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
+
+async function api(path, opts={}){
+  const r = await fetch(path, {headers:{"Content-Type":"application/json"}, ...opts});
+  if(r.status === 401){ location.href = "/auth/login"; throw new Error("auth"); }
+  let data = {};
+  try{ data = await r.json(); }catch(e){}
+  if(!r.ok) throw new Error(data.detail || ("Ошибка "+r.status));
+  return data;
+}
+
+function isFail(resp){ return resp && typeof resp === "object" && !Array.isArray(resp) && resp.ok === false; }
+
+function toast(msg, type=""){
+  const t = document.createElement("div");
+  t.className = "toast "+type;
+  t.textContent = msg;
+  $("toasts").appendChild(t);
+  setTimeout(()=>t.remove(), 6000);
+}
+
+function closeModal(id){ $(id).classList.remove("on"); }
+function openModal(id){ $(id).classList.add("on"); }
+
+function switchTab(name){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("on"));
+  $("tab-"+name).classList.add("on");
+  document.querySelectorAll(".bottom-nav button").forEach(b=>b.classList.toggle("on", b.dataset.tab===name));
+  if(name==="shop") loadCatalog();
+  if(name==="inv"){ loadInventory(); loadWithdrawalStatus(); }
+  if(name==="sell"){ loadSellState(); }
+  if(name==="profile") loadProfile();
+}
+
+/* ---------- Каталог ---------- */
+async function loadCatalog(){
+  const p = new URLSearchParams();
+  p.set("st", $("fSt").value); p.set("wear", $("fWear").value); p.set("wtype", $("fType").value);
+  p.set("sort", $("fSort").value);
+  if($("fMin").value) p.set("pmin", Math.round(parseFloat($("fMin").value)*100));
+  if($("fMax").value) p.set("pmax", Math.round(parseFloat($("fMax").value)*100));
+  let items = [];
+  try{ items = await api("/api/catalog?"+p.toString()); }catch(e){ toast(e.message,"err"); }
+  const box = $("catalog");
+  box.innerHTML = "";
+  $("catalogEmpty").style.display = items.length ? "none" : "block";
+  items.forEach(s=>{
+    const d = document.createElement("div");
+    d.className = "card";
+    d.innerHTML = `<img src="${esc(s.icon_url)}" loading="lazy" onerror="this.style.opacity=.2">
+      <div class="body"><div class="name">${esc(s.name)}</div>
+      <div class="price">от ${fmt(s.min_price||0)}</div>
+      <div class="stock ${s.in_stock>0?"":"out"}">${s.in_stock>0 ? "В наличии: "+s.in_stock : "Нет в наличии. Доступен предзаказ"}</div></div>`;
+    d.onclick = ()=>openBuyModal(s);
+    box.appendChild(d);
+  });
+}
+
+async function openBuyModal(skin){
+  currentSkin = skin;
+  try{ currentPrices = await api("/api/skins/"+skin.id+"/prices"); }catch(e){ toast(e.message,"err"); return; }
+  const st = currentPrices.some(p=>p.stattrak);
+  $("buyModalBody").innerHTML = `
+    <img class="big" src="${esc(skin.icon_url)}" onerror="this.style.opacity=.2">
+    <h2 style="margin:12px 0 4px">${esc(skin.name)}</h2>
+    <div class="field"><label>StatTrak</label>
+      <select id="mSt" onchange="recalcBuy()">
+        <option value="0">Нет</option>
+        ${st?'<option value="1">Да</option>':""}
+      </select></div>
+    <div class="field"><label>Состояние</label>
+      <select id="mWear" onchange="recalcBuy()">
+        ${WEARS.map(w=>`<option value="${w}">${w} — ${WEAR_FULL[w]}</option>`).join("")}
+      </select></div>
+    <div class="price-line"><span>Цена Steam</span><span class="v" id="mSteam"></span></div>
+    <div class="price-line"><span>Цена магазина</span><span class="v" id="mSell"></span></div>
+    <div class="price-line"><span>В наличии</span><span class="v" id="mStock"></span></div>
+    <button class="btn" style="width:100%;margin-top:10px" id="mAction" onclick="doBuyOrPreorder()">Купить</button>`;
+  recalcBuy();
+  openModal("buyModalBg");
+}
+
+function currentCombo(){
+  const st = $("mSt").value === "1", wear = $("mWear").value;
+  return currentPrices.find(p=>p.stattrak===st && p.wear===wear);
+}
+
+function recalcBuy(){
+  const c = currentCombo();
+  $("mSteam").textContent = c && c.steam_price ? fmt(c.steam_price) : "—";
+  $("mSell").textContent = c && c.sell_price ? fmt(c.sell_price) : "—";
+  $("mStock").textContent = c ? (c.in_stock>0 ? c.in_stock+" шт." : "нет") : "—";
+  const btn = $("mAction");
+  if(!c || !c.sell_price){ btn.textContent="Недоступно"; btn.disabled=true; return; }
+  if(c.in_stock>0){ btn.textContent="Купить"; btn.disabled=false; btn.className="btn"; }
+  else{ btn.textContent="Предзаказ"; btn.disabled=false; btn.className="btn green"; }
+}
+
+async function doBuyOrPreorder(){
+  const c = currentCombo();
+  if(!c) return;
+  try{
+    let r;
+    if(c.in_stock>0){
+      r = await api("/api/buy",{method:"POST",body:JSON.stringify({skin_id:currentSkin.id,stattrak:c.stattrak,wear:c.wear})});
+      if(isFail(r)){ toast(r.message || "Ошибка покупки", "err"); return; }
+      toast("Скин куплен! Он в вашем инвентаре на сайте.","ok");
+    }else{
+      r = await api("/api/preorder",{method:"POST",body:JSON.stringify({skin_id:currentSkin.id,stattrak:c.stattrak,wear:c.wear})});
+      if(isFail(r)){ toast(r.message || "Ошибка предзаказа", "err"); return; }
+      toast("Предзаказ создан. Срок выполнения — 14 дней.","ok");
+    }
+    closeModal("buyModalBg");
+    await refreshMe(); loadCatalog();
+  }catch(e){ toast(e.message,"err"); }
+}
+
+/* ---------- Продажа ---------- */
+async function loadSteamInventory(){
+  $("loadInvBtn").disabled = true;
+  $("loadInvBtn").textContent = "Загрузка…";
+  try{
+    const data = await api("/api/steam/inventory");
+    const box = $("sellList");
+    sellSelected.clear();
+    if(isFail(data)){
+      window._steamItems = [];
+      let html = '<div class="empty">' + esc(data.message || "Не удалось загрузить инвентарь.") + '</div>';
+      if(data.debug){
+        html += '<details style="margin-top:10px;color:var(--muted);font-size:12px">' +
+                '<summary style="cursor:pointer">Debug (только для админа)</summary>' +
+                '<pre style="white-space:pre-wrap;word-break:break-all;background:var(--bg3);padding:10px;border-radius:8px;margin-top:6px">' +
+                esc(JSON.stringify(data.debug, null, 2)) +
+                '</pre></details>';
+      }
+      box.innerHTML = html;
+      if($("sellSummary")) $("sellSummary").remove();
+      updateSellFooter([]);
+      return;
+    }
+    const items = Array.isArray(data) ? data : [];
+    const REASONS = {
+      price_unavailable: "Цена недоступна",
+      price_processing: "Цена обрабатывается",
+      not_marketable: "Нельзя продать",
+      too_cheap: "Слишком дешёвый",
+      no_wear: "Без состояния"
+    };
+    const sellableCount = items.filter(i=>i.sellable === true).length;
+    box.innerHTML = items.length ? "" : '<div class="empty">В вашем инвентаре нет подходящих скинов.</div>';
+    items.forEach(it=>{
+      const ok = it.sellable === true;
+      const d = document.createElement("div");
+      d.className = "item";
+      if(!ok) d.style.opacity = ".6";
+      const badge = ok ? "" : ' <span style="display:inline-block;background:var(--bg3);color:var(--muted);border:1px solid var(--border);border-radius:6px;padding:1px 7px;font-size:11px;margin-left:6px;white-space:nowrap">' + esc(REASONS[it.reason] || "Недоступно") + '</span>';
+      d.innerHTML = `<input type="checkbox" class="checkbox" data-mhn="${esc(it.market_hash_name)}"${ok ? "" : " disabled"}>
+        <img src="${esc(it.icon_url)}" onerror="this.style.opacity=.2">
+        <div class="info"><div class="nm">${esc(it.market_hash_name)}${badge}</div></div>
+        <div class="pr"><div class="s">Steam: ${ok ? fmt(it.steam_price) : "—"}</div><div class="b">Сайт: ${ok ? fmt(it.site_price) : "—"}</div></div>`;
+      if(ok){
+        d.querySelector("input").onchange = ev=>{
+          const mhn = ev.target.dataset.mhn;
+          if(ev.target.checked){
+            if(sellSelected.size>=5){ ev.target.checked=false; toast("Максимум 5 скинов","err"); return; }
+            sellSelected.add(mhn);
+          } else sellSelected.delete(mhn);
+          updateSellFooter(items);
+        };
+      }
+      box.appendChild(d);
+    });
+    const summary = document.createElement("div");
+    summary.id = "sellSummary";
+    summary.style.cssText = "margin-top:10px;color:var(--muted);font-size:13px";
+    summary.textContent = "В вашем инвентаре: " + items.length + " скинов, из них " + sellableCount + " доступно к продаже.";
+    const old = $("sellSummary");
+    if(old) old.remove();
+    box.insertAdjacentElement("afterend", summary);
+    updateSellFooter(items);
+    window._steamItems = items;
+  }catch(e){ toast(e.message,"err"); }
+  $("loadInvBtn").disabled = false;
+  $("loadInvBtn").textContent = "Обновить инвентарь";
+}
+
+function updateSellFooter(items){
+  const sel = items.filter(i=>sellSelected.has(i.market_hash_name));
+  $("sellFooter").style.display = sel.length ? "block" : "none";
+  $("sellTotal").textContent = fmt(sel.reduce((a,i)=>a+(i.site_price||0),0));
+  $("sellCount").textContent = "· "+sel.length+" из 5";
+}
+
+async function submitSale(){
+  const items = (window._steamItems||[]).filter(i=>sellSelected.has(i.market_hash_name));
+  if(!items.length) return;
+  $("sellSubmitBtn").disabled = true;
+  try{
+    const r = await api("/api/sale-requests",{method:"POST",body:JSON.stringify({items:items.map(i=>({market_hash_name:i.market_hash_name,icon_url:i.icon_url}))})});
+    if(isFail(r)){ toast(r.message || "Ошибка создания заявки", "err"); }
+    else{
+      sellSelected.clear();
+      await loadSellState();
+    }
+  }catch(e){ toast(e.message,"err"); }
+  $("sellSubmitBtn").disabled = false;
+}
+
+async function loadSellState(){
+  try{
+    const req = await api("/api/sale-requests/active");
+    if(!req){
+      closeModal("sellModalBg");
+      if(sellTimer){ clearInterval(sellTimer); sellTimer=null; }
+      $("sellStatus").style.display="none";
+      return;
+    }
+    openModal("sellModalBg");
+    $("sellTradeLink").href = req.trade_link;
+    $("sellTradeLink").textContent = req.trade_link;
+    $("sellModalTotal").textContent = fmt(req.total);
+    $("sellModalItems").innerHTML = req.items.map(i=>`<div style="padding:4px 0">• ${esc(i.market_hash_name)} — <b style="color:var(--accent2)">${fmt(i.site_price)}</b></div>`).join("");
+    $("sellModalStatus").textContent = "Ожидаем подтверждения администратора…";
+    $("sellStatus").style.display="block";
+    $("sellStatus").innerHTML = `<b>Активная заявка на продажу</b> — ${fmt(req.total)}. Отправьте трейд по ссылке в открытом окне.`;
+    if(sellTimer) clearInterval(sellTimer);
+    sellTimer = setInterval(async ()=>{
+      try{
+        const r2 = await api("/api/sale-requests/active");
+        if(!r2){ clearInterval(sellTimer); sellTimer=null; closeModal("sellModalBg"); $("sellStatus").style.display="none"; await refreshMe(); toast("Заявка обработана","ok"); }
+      }catch(e){}
+    }, 10000);
+  }catch(e){}
+}
+
+/* ---------- Инвентарь сайта ---------- */
+async function loadInventory(){
+  let items = [];
+  try{ items = await api("/api/inventory"); }catch(e){ toast(e.message,"err"); }
+  invSelected.clear();
+  const box = $("invList");
+  box.innerHTML = items.length ? "" : '<div class="empty">Инвентарь пуст. Купите скины во вкладке «Купить».</div>';
+  items.forEach(it=>{
+    const d = document.createElement("div");
+    d.className = "item";
+    d.innerHTML = `<input type="checkbox" class="checkbox" data-id="${it.id}">
+      <img src="${esc(it.icon_url)}" onerror="this.style.opacity=.2">
+      <div class="info"><div class="nm">${esc(it.name)}${it.stattrak?' <span style="color:var(--warn)">StatTrak</span>':""}</div>
+      <div class="sub">${it.wear} · float ${it.float_value.toFixed(4)}</div></div>
+      <div class="pr"><div class="s">Steam: —</div><div class="b">${fmt(it.sell_price)}</div></div>`;
+    d.querySelector("input").onchange = ev=>{
+      const id = ev.target.dataset.id;
+      if(ev.target.checked){
+        if(invSelected.size>=5){ ev.target.checked=false; toast("Максимум 5 скинов","err"); return; }
+        invSelected.add(id);
+      } else invSelected.delete(id);
+      $("invFooter").style.display = invSelected.size ? "block" : "none";
+      $("invTotal").textContent = fmt(items.filter(i=>invSelected.has(String(i.id))).reduce((a,i)=>a+i.sell_price,0));
+    };
+    box.appendChild(d);
+  });
+  $("getBtn").disabled = ME.balance < 0;
+  $("getBtn").title = ME.balance < 0 ? "Баланс в минусе" : "";
+}
+
+async function submitWithdraw(){
+  if(!invSelected.size) return;
+  try{
+    const r = await api("/api/withdraw",{method:"POST",body:JSON.stringify({instance_ids:[...invSelected]})});
+    if(isFail(r)){ toast(r.message || "Ошибка создания заявки", "err"); return; }
+    toast("Заявка на вывод создана. Админ свяжется с вами через трейд.","ok");
+    invSelected.clear();
+    loadInventory(); loadWithdrawalStatus();
+  }catch(e){ toast(e.message,"err"); }
+}
+
+async function loadWithdrawalStatus(){
+  try{
+    const wd = await api("/api/withdrawals/active");
+    const p = $("wdStatusPanel");
+    if(!wd){ p.style.display="none"; return; }
+    p.style.display="block";
+    let extra = "";
+    if(wd.status==="pending") extra = "Ожидает администратора.";
+    if(wd.status==="sending") extra = "Админ готовит трейд. Принимайте обмен!";
+    if(wd.status==="sent") extra = `<span style="color:var(--accent2)">Трейд отправлен!</span> Примите обмен в Steam и подтвердите получение.
+      <button class="btn green sm" style="margin-left:10px" onclick="confirmWd(${wd.id})">Подтвердить получение</button>`;
+    p.innerHTML = `<b>Заявка на вывод #${wd.id}</b> (${fmt(wd.total)}) — ${extra}`;
+  }catch(e){}
+}
+
+async function confirmWd(id){
+  try{
+    const r = await api("/api/withdrawals/"+id+"/confirm",{method:"POST"});
+    if(isFail(r)){ toast(r.message || "Ошибка подтверждения", "err"); return; }
+    toast("Получение подтверждено. Вывод закрыт.","ok");
+    loadWithdrawalStatus();
+  }catch(e){ toast(e.message,"err"); }
+}
+
+/* ---------- Профиль ---------- */
+async function loadProfile(){
+  $("pAvatar").src = ME.avatar || "";
+  $("pNick").textContent = ME.nickname;
+  $("pSiteId").textContent = ME.id;
+  $("pSteamId").textContent = ME.steam_id;
+  $("pBalance").textContent = fmt(ME.balance);
+  $("pRefCode").textContent = ME.referral_code;
+  $("pStaffBadge").style.display = ME.is_staff ? "block" : "none";
+  $("tlCurrent").innerHTML = "Текущая: <b>" + (ME.trade_link ? esc(ME.trade_link) : "не привязана") + "</b>";
+  $("tlInput").value = ME.trade_link || "";
+  $("adminLinkRow").style.display = ME.is_staff ? "block" : "none";
+  try{
+    const txs = await api("/api/transactions");
+    $("txList").innerHTML = txs.length ? `<table><tr><th>Дата</th><th>Тип</th><th>Сумма</th><th>Описание</th></tr>` +
+      txs.map(t=>`<tr><td>${t.created_at?t.created_at.slice(0,16).replace("T"," "):""}</td><td>${t.type}</td>
+      <td class="${t.amount>=0?"plus":"minus"}">${t.amount>=0?"+":""}${fmt(t.amount)}</td><td>${esc(t.description)}</td></tr>`).join("") + "</table>"
+      : '<div class="empty" style="padding:20px">Транзакций нет</div>';
+  }catch(e){}
+}
+
+async function saveTradeLink(){
+  try{
+    const r = await api("/api/me/trade-link",{method:"PUT",body:JSON.stringify({trade_link:$("tlInput").value.trim()})});
+    if(isFail(r)){ toast(r.message || "Ошибка сохранения", "err"); return; }
+    toast("Трейд-ссылка сохранена","ok");
+    await refreshMe(); loadProfile();
+  }catch(e){ toast(e.message,"err"); }
+}
+
+async function applyPromo(){
+  try{
+    const r = await api("/api/promo/apply",{method:"POST",body:JSON.stringify({code:$("promoInput").value})});
+    if(isFail(r)){ toast(r.message || "Ошибка применения промокода", "err"); return; }
+    toast(r.message || "Промокод применён","ok");
+    $("promoInput").value = "";
+    await refreshMe();
+  }catch(e){ toast(e.message,"err"); }
+}
+
+/* ---------- Уведомления ---------- */
+async function loadNotifs(){
+  try{
+    const d = await api("/api/notifications");
+    $("bellDot").classList.toggle("on", d.unread>0);
+    $("notifList").innerHTML = d.items.length ? d.items.map(n=>`
+      <div class="notif ${n.is_read?"":"unread"}">
+        <div class="txt">${esc(n.text)}<br><time>${n.created_at?n.created_at.slice(0,16).replace("T"," "):""}</time></div>
+        <button class="btn ghost sm" onclick="delNotif(${n.id})">&times;</button>
+      </div>`).join("") : '<div class="empty" style="padding:16px">Уведомлений нет</div>';
+    d.items.filter(n=>n.id>lastNotifId).forEach(n=>{ if(lastNotifId>0) toast(n.text,"ok"); lastNotifId=Math.max(lastNotifId,n.id); });
+  }catch(e){}
+}
+
+async function readAllNotifs(){ try{ const r = await api("/api/notifications/read-all",{method:"POST"}); if(isFail(r)){toast(r.message||"Ошибка","err");return;} loadNotifs(); }catch(e){} }
+async function deleteAllNotifs(){ try{ const r = await api("/api/notifications",{method:"DELETE"}); if(isFail(r)){toast(r.message||"Ошибка","err");return;} loadNotifs(); }catch(e){} }
+async function delNotif(id){ try{ const r = await api("/api/notifications/"+id,{method:"DELETE"}); if(isFail(r)){toast(r.message||"Ошибка","err");return;} loadNotifs(); }catch(e){} }
+
+/* ---------- Прочее ---------- */
+async function refreshMe(){
+  ME = await api("/api/me");
+  $("balanceChip").textContent = fmt(ME.balance);
+}
+
+async function logout(){
+  try{ await api("/api/logout",{method:"POST"}); }catch(e){}
+  location.href = "/auth/login";
+}
+
+$("bellBtn").onclick = ()=>{ $("notifPanel").classList.toggle("on"); loadNotifs(); };
+$("logoutBtn").onclick = logout;
+
+(async function init(){
+  try{
+    const st = await api("/api/settings");
+    SUPPORT = st.support_link || SUPPORT;
+    $("supportLink").href = SUPPORT; $("supportLink").textContent = SUPPORT;
+    $("footSupport").href = SUPPORT; $("footSupport").textContent = SUPPORT.replace("https://","");
+  }catch(e){}
+  try{ await refreshMe(); }catch(e){ return; }
+  loadCatalog(); loadNotifs();
+  setInterval(loadNotifs, 10000);
+  await loadSellState();
+  await loadWithdrawalStatus();
+})();
+</script>
+</body>
+</html>
